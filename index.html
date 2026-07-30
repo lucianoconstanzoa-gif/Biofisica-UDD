@@ -119,10 +119,10 @@
                         <i class="fa-solid fa-scale-balanced text-mint-400"></i>
                         <span>Evaluaciones & Normativa</span>
                     </button>
-                    <a href="#schedule-section" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-clinical-600 hover:bg-clinical-500 text-white text-sm font-medium transition-all duration-200 shadow-md shadow-clinical-900/20">
+                    <button onclick="openCalendarModal()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-clinical-600 hover:bg-clinical-500 text-white text-sm font-medium transition-all duration-200 shadow-md shadow-clinical-900/20">
                         <i class="fa-solid fa-calendar-days"></i>
                         <span>Ver Cronograma</span>
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -572,6 +572,57 @@
         </div>
     </div>
 
+    <!-- CALENDAR MODAL -->
+    <div id="calendarModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="calendar-modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div id="calendarBackdrop" onclick="closeCalendarModal()" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity opacity-0" aria-hidden="true"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div id="calendarPanel" class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-6xl sm:w-full border border-slate-200 opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                <div class="bg-gradient-to-r from-clinical-900 to-slate-900 px-6 py-5 text-white flex items-center justify-between gap-3 flex-col sm:flex-row">
+                    <div>
+                        <h3 id="calendarModalTitle" class="text-xl sm:text-2xl font-heading font-bold">Cronograma Interactivo 2026</h3>
+                        <p class="text-sm text-slate-200 mt-1">Navega mes a mes y selecciona un día para ver horarios, módulos y detalles.</p>
+                    </div>
+                    <button onclick="closeCalendarModal()" class="text-slate-200 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <div class="p-6 sm:p-8 space-y-6 max-h-[80vh] overflow-y-auto">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-center gap-2 mb-4" id="monthButtons"></div>
+                            <div class="grid grid-cols-7 gap-1 text-center text-[11px] uppercase tracking-widest text-slate-500 mb-2">
+                                <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+                            </div>
+                            <div id="calendarGrid" class="grid grid-cols-7 gap-1"></div>
+                            <div class="mt-4 text-sm text-slate-600 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                <span id="calendarMonthLabel" class="font-semibold text-slate-800"></span>
+                                <span class="inline-flex items-center gap-2 text-xs text-slate-500">
+                                    <span class="w-2 h-2 rounded-full bg-clinical-600"></span> Días con sesiones programadas
+                                </span>
+                            </div>
+                        </div>
+                        <aside class="w-full lg:w-80 rounded-3xl bg-slate-50 border border-slate-200 p-4 shadow-sm">
+                            <h4 class="text-sm font-semibold text-slate-800 mb-3">Detalle del Día</h4>
+                            <div class="space-y-3 text-sm text-slate-700" id="dayDetails">
+                                <div class="rounded-2xl bg-white p-3 border border-slate-200">
+                                    <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-2">Fecha seleccionada</p>
+                                    <p id="selectedDateLabel" class="font-semibold text-slate-900">Selecciona un día</p>
+                                </div>
+                                <div class="rounded-2xl bg-white p-3 border border-slate-200">
+                                    <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-2">Sesiones programadas</p>
+                                    <div id="selectedDaySessions" class="space-y-3 text-[13px] text-slate-700">
+                                        <p class="text-slate-400">Haz clic en un día para ver sesiones.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JAVASCRIPT LOGIC -->
     <script>
         // OFFICIAL COURSE DATA EMBEDDED FROM EXCEL SPREADSHEET
@@ -581,19 +632,28 @@
         let currentCategory = 'ALL';
         let currentWeek = 'ALL';
         let searchQuery = '';
+        let selectedCalendarDate = null;
 
         // INITIALIZE APP
         document.addEventListener('DOMContentLoaded', () => {
             renderSessions();
+            buildSessionDateIndex();
+            buildCalendar();
             
             // Listen for Escape key to close modals
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     closeModal();
                     closeRulesModal();
+                    closeCalendarModal();
                 }
             });
         });
+
+        function renderSessions() {
+            renderGrid(sessionsData);
+            updateFilterLabel(sessionsData.length);
+        }
 
         // FILTER FUNCTIONS
         function setCategoryFilter(cat) {
@@ -680,6 +740,293 @@
                 if (searchQuery !== '') labelText += `• Búsqueda: "${searchQuery}"`;
             }
             label.textContent = labelText;
+        }
+
+        // MONTHS / CALENDAR UI
+        const monthNames = [
+            'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        ];
+
+        const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+        function buildCalendar() {
+            const buttonsContainer = document.getElementById('monthButtons');
+            const visibleStart = 7; // Mostrar desde agosto en adelante
+            for (let i = visibleStart; i < 12; i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = monthNames[i];
+                btn.className = 'px-3 py-2 rounded-full text-xs font-semibold border border-slate-200 bg-slate-100 text-slate-700 hover:bg-clinical-600 hover:text-white transition-colors';
+                btn.onclick = () => selectMonth(i);
+                buttonsContainer.appendChild(btn);
+            }
+            selectMonth(visibleStart);
+        }
+
+        function buildSessionDateIndex() {
+            const monthNames = {
+                ene: 0, enero: 0, feb: 1, febrero: 1, mar: 2, marzo: 2,
+                abr: 3, abril: 3, may: 4, mayo: 4, jun: 5, junio: 5,
+                jul: 6, julio: 6, ago: 7, agosto: 7, sep: 8, septiembre: 8,
+                oct: 9, octubre: 9, nov: 10, noviembre: 10, dic: 11, diciembre: 11
+            };
+
+            const weekdayMap = {
+                lunes: 1, martes: 2, miercoles: 3, miércoles: 3, jueves: 4,
+                viernes: 5, sabado: 6, sábado: 6, domingo: 0
+            };
+
+            const normalize = (text) => text.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
+
+            const parseDateString = (text, fallbackMonth = null) => {
+                if (!text || typeof text !== 'string') return null;
+                const normalized = normalize(text);
+
+                const numberMonthMatch = normalized.match(/(\d{1,2})[.\-/](\d{1,2})/);
+                if (numberMonthMatch) {
+                    const day = Number(numberMonthMatch[1]);
+                    const month = Number(numberMonthMatch[2]) - 1;
+                    if (!Number.isNaN(day) && !Number.isNaN(month)) {
+                        return new Date(2026, month, day);
+                    }
+                }
+
+                const monthNameMatch = normalized.match(/(\d{1,2})[.\-/]?\s*(ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)[a-z]*/);
+                if (monthNameMatch) {
+                    const day = Number(monthNameMatch[1]);
+                    const month = monthNames[monthNameMatch[2]];
+                    return new Date(2026, month, day);
+                }
+
+                const monthFirstMatch = normalized.match(/(ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)[a-z]*\s*(\d{1,2})/);
+                if (monthFirstMatch) {
+                    const day = Number(monthFirstMatch[2]);
+                    const month = monthNames[monthFirstMatch[1]];
+                    return new Date(2026, month, day);
+                }
+
+                if (fallbackMonth !== null) {
+                    const dayOnlyMatch = normalized.match(/(\d{1,2})/);
+                    if (dayOnlyMatch) {
+                        const day = Number(dayOnlyMatch[1]);
+                        return new Date(2026, fallbackMonth, day);
+                    }
+                }
+
+                return null;
+            };
+
+            const parseRangeDates = (text) => {
+                if (!text || typeof text !== 'string') return [];
+                const normalized = normalize(text);
+                const rangeMatch = normalized.match(/(\d{1,2}[.\-/](?:\d{1,2}|[a-z]{3,}))[\s]*[-–—][\s]*(\d{1,2}[.\-/](?:\d{1,2}|[a-z]{3,}))/);
+                if (rangeMatch) {
+                    const start = parseDateString(rangeMatch[1]);
+                    const end = parseDateString(rangeMatch[2], start ? start.getMonth() : null);
+                    if (start && end) {
+                        return [start, end];
+                    }
+                }
+
+                const single = parseDateString(normalized);
+                return single ? [single] : [];
+            };
+
+            const findWeekdayDateInRange = (start, end, weekday) => {
+                const result = [];
+                const current = new Date(start);
+                while (current <= end) {
+                    if (current.getDay() === weekday) {
+                        result.push(new Date(current));
+                    }
+                    current.setDate(current.getDate() + 1);
+                }
+                return result;
+            };
+
+            sessionsData.forEach(item => {
+                item.dates = [];
+                const parsedRange = parseRangeDates(item.rangoFecha);
+                const dayText = normalize(item.dia || '');
+                const weekdayName = Object.keys(weekdayMap).find(name => dayText.includes(name));
+
+                if (parsedRange.length === 2) {
+                    const [start, end] = parsedRange;
+                    if (weekdayName) {
+                        const matches = findWeekdayDateInRange(start, end, weekdayMap[weekdayName]);
+                        if (matches.length === 1) {
+                            item.dates = matches;
+                        } else if (matches.length > 1) {
+                            item.dates = [matches[0]];
+                        }
+                    }
+                    if (item.dates.length === 0) {
+                        let current = new Date(start);
+                        while (current <= end) {
+                            item.dates.push(new Date(current));
+                            current.setDate(current.getDate() + 1);
+                        }
+                    }
+                } else if (parsedRange.length === 1) {
+                    item.dates.push(parsedRange[0]);
+                }
+
+                if (item.dates.length === 0) {
+                    const fallbackDate = parseDateString(item.dia, parsedRange[0] ? parsedRange[0].getMonth() : null);
+                    if (fallbackDate) {
+                        item.dates.push(fallbackDate);
+                    }
+                }
+            });
+        }
+
+        function selectMonth(monthIndex) {
+            const buttons = document.querySelectorAll('#monthButtons button');
+            buttons.forEach((btn, idx) => {
+                btn.classList.toggle('bg-clinical-600', idx === monthIndex);
+                btn.classList.toggle('text-white', idx === monthIndex);
+                btn.classList.toggle('bg-slate-100', idx !== monthIndex);
+            });
+
+            const calendarGrid = document.getElementById('calendarGrid');
+            const monthLabel = document.getElementById('calendarMonthLabel');
+            calendarGrid.innerHTML = '';
+            monthLabel.textContent = `${monthNames[monthIndex]} 2026`;
+
+            const firstOfMonth = new Date(2026, monthIndex, 1).getDay();
+            const offset = firstOfMonth === 0 ? 6 : firstOfMonth - 1;
+
+            for (let i = 0; i < offset; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'h-16 rounded-2xl bg-slate-50';
+                calendarGrid.appendChild(empty);
+            }
+
+            let firstSessionDay = null;
+            for (let day = 1; day <= monthDays[monthIndex]; day++) {
+                const cell = document.createElement('div');
+                const cellDate = new Date(2026, monthIndex, day);
+                const sessions = sessionsData.filter(item => Array.isArray(item.dates) && item.dates.some(d => d.getTime() === cellDate.getTime()));
+                const hasSession = sessions.length > 0;
+
+                cell.className = 'h-16 rounded-2xl p-2 border border-slate-200 bg-white flex flex-col justify-between';
+                if (hasSession) {
+                    cell.classList.add('border-clinical-500/30', 'bg-clinical-50');
+                    if (!firstSessionDay) {
+                        firstSessionDay = cellDate;
+                    }
+                }
+
+                const dayNumber = document.createElement('div');
+                dayNumber.textContent = day;
+                dayNumber.className = 'text-sm font-semibold text-slate-900';
+                cell.appendChild(dayNumber);
+
+                if (hasSession) {
+                    const badge = document.createElement('div');
+                    badge.className = 'mt-1 text-[10px] font-semibold text-clinical-700 bg-clinical-100 rounded-full px-2 py-1 inline-flex items-center justify-center';
+                    badge.textContent = `${sessions.length} sesión${sessions.length === 1 ? '' : 'es'}`;
+                    cell.appendChild(badge);
+                } else {
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'text-[10px] text-slate-400 mt-auto';
+                    placeholder.textContent = 'Libre';
+                    cell.appendChild(placeholder);
+                }
+
+                cell.classList.add('cursor-pointer', 'transition-all', 'duration-200', 'hover:border-clinical-600');
+                cell.onclick = () => {
+                    selectedCalendarDate = new Date(cellDate);
+                    showDayDetails(cellDate);
+                };
+                calendarGrid.appendChild(cell);
+            }
+
+            if (firstSessionDay) {
+                selectedCalendarDate = firstSessionDay;
+                showDayDetails(firstSessionDay);
+            } else {
+                showDayDetails(null);
+            }
+        }
+
+        function openCalendarModal() {
+            const modal = document.getElementById('calendarModal');
+            const backdrop = document.getElementById('calendarBackdrop');
+            const panel = document.getElementById('calendarPanel');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                backdrop.classList.add('opacity-100');
+                panel.classList.remove('opacity-0', 'translate-y-4', 'sm:scale-95');
+                panel.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+            }, 10);
+
+            document.body.classList.add('overflow-hidden');
+
+            const buttonsContainer = document.getElementById('monthButtons');
+            buttonsContainer.innerHTML = '';
+            buildCalendar();
+        }
+
+        function closeCalendarModal() {
+            const modal = document.getElementById('calendarModal');
+            const backdrop = document.getElementById('calendarBackdrop');
+            const panel = document.getElementById('calendarPanel');
+
+            backdrop.classList.remove('opacity-100');
+            backdrop.classList.add('opacity-0');
+            panel.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
+            panel.classList.add('opacity-0', 'translate-y-4', 'sm:scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }, 200);
+        }
+
+        function showDayDetails(date) {
+            const label = document.getElementById('selectedDateLabel');
+            const details = document.getElementById('selectedDaySessions');
+            const selectedDate = date ? new Date(date) : null;
+            if (!selectedDate) {
+                label.textContent = 'Selecciona un día';
+                details.innerHTML = '<p class="text-slate-400">Haz clic en un día para ver sesiones.</p>';
+                return;
+            }
+
+            label.textContent = formatDateLong(selectedDate);
+            const sessions = sessionsData.filter(item => item.dates.some(d => d.getTime() === selectedDate.getTime()));
+            if (sessions.length === 0) {
+                details.innerHTML = '<p class="text-slate-500">No hay sesiones programadas para este día.</p>';
+                return;
+            }
+
+            details.innerHTML = sessions.map(session => {
+                return `
+                    <div class="rounded-2xl bg-slate-50 border border-slate-200 p-3">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="inline-flex items-center gap-2 px-2 py-1 rounded-full text-[11px] font-semibold bg-white text-slate-700 border border-slate-200">
+                                <i class="fa-solid fa-clock text-[10px]"></i> ${session.horario}
+                            </span>
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold ${session.categoria === 'Laboratorio' ? 'bg-purple-100 text-purple-700 border-purple-200' : session.categoria === 'Ayudantía' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : session.categoria === 'Evaluación' ? 'bg-rose-100 text-rose-700 border-rose-200' : 'bg-sky-100 text-sky-700 border-sky-200'}">
+                                ${session.categoria}
+                            </span>
+                        </div>
+                        <h5 class="font-semibold text-slate-900 mb-2">${session.contenido}</h5>
+                        <p class="text-[12px] text-slate-600 leading-relaxed mb-2"><strong>Actividad:</strong> ${session.actividad}</p>
+                        <p class="text-[12px] text-slate-600 leading-relaxed mb-2"><strong>Resultados de Aprendizaje:</strong> ${session.aprendizajes}</p>
+                        <p class="text-[12px] text-slate-600 leading-relaxed"><strong>Sala:</strong> ${session.sala}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatDateLong(date) {
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            return date.toLocaleDateString('es-CL', options);
         }
 
         // RENDER GRID FUNCTION
