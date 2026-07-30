@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biofísica Kinesiológica • Programación Académica 2026-2</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6.4.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        clinical: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        mint: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom smooth scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Fade in up animation for cards */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate3d(0, 16px, 0);
+            }
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        /* Line clamp utilities */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-clinical-500 selection:text-white min-h-screen flex flex-col">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="bg-gradient-to-r from-clinical-900 via-clinical-800 to-slate-900 text-white shadow-xl sticky top-0 z-40 border-b border-clinical-700/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="w-28 h-24 rounded-3xl bg-white flex items-center justify-center overflow-hidden">
+                        <img src="logo.jpg" alt="Facultad de Medicina" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs uppercase tracking-wider font-semibold bg-clinical-500/30 text-clinical-200 px-2.5 py-0.5 rounded-full border border-clinical-400/30">Kinesiología</span>
+                            <span class="text-xs text-slate-300 font-medium">Segundo Semestre 2026</span>
+                        </div>
+                        <h1 class="text-xl sm:text-2xl font-heading font-bold text-white tracking-tight">
+                            Biofísica
+                        </h1>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <button onclick="openRulesModal()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-all duration-200 border border-white/15 backdrop-blur-sm shadow-sm">
+                        <i class="fa-solid fa-scale-balanced text-mint-400"></i>
+                        <span>Evaluaciones & Normativa</span>
+                    </button>
+                    <a href="#schedule-section" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-clinical-600 hover:bg-clinical-500 text-white text-sm font-medium transition-all duration-200 shadow-md shadow-clinical-900/20">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span>Ver Cronograma</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO & SEMESTER SUMMARY DASHBOARD -->
+    <section class="bg-gradient-to-b from-slate-900 via-clinical-900 to-slate-900 text-white py-8 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto">
+            <!-- Course metadata banner -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 flex items-center space-x-3.5">
+                    <div class="w-10 h-10 rounded-lg bg-clinical-500/20 flex items-center justify-center text-clinical-400 text-lg">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Docente Principal</p>
+                        <p class="text-sm font-semibold text-white">Gustavo Castro Palominos</p>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 flex items-center space-x-3.5">
+                    <div class="w-10 h-10 rounded-lg bg-mint-500/20 flex items-center justify-center text-mint-400 text-lg">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Horarios Semanales</p>
+                        <p class="text-xs font-semibold text-white">Cátedra: Lun H6-H7 • Lab: Sáb H1-H2 • Ayud: Vie H5</p>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 flex items-center space-x-3.5">
+                    <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 text-lg">
+                        <i class="fa-solid fa-flask"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Laboratorios Prácticos</p>
+                        <p class="text-sm font-semibold text-white">Asistencia 100% Obligatoria</p>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 flex items-center space-x-3.5">
+                    <div class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 text-lg">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-medium">Eximición & Examen</p>
+                        <p class="text-sm font-semibold text-white">Nota ≥ 5.8 • Examen: 25 Nov</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT AREA -->
+    <main id="schedule-section" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- SEARCH BAR & FILTER TOOLBAR -->
+        <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-md border border-slate-200/80 mb-8 sticky top-20 z-30 transition-all">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                
+                <!-- Search Input -->
+                <div class="relative flex-grow max-w-xl">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Buscar por tema (ej. Cinemática, Vectores, IAG, Derivadas, Certamen)..." 
+                        class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-clinical-500 focus:bg-white transition-all"
+                        oninput="filterSessions()"
+                    />
+                    <button 
+                        id="clearSearchBtn" 
+                        onclick="clearSearch()" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 hidden">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Week Selector Dropdown -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex items-center gap-2">
+                        <label for="weekFilter" class="text-xs font-semibold uppercase tracking-wider text-slate-500 hidden sm:inline">Semana:</label>
+                        <select 
+                            id="weekFilter" 
+                            onchange="filterSessions()" 
+                            class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-clinical-500">
+                            <option value="ALL">Todas las semanas (1 - 17)</option>
+                            <option value="1">Semana 1 (03.08 - 08.08)</option>
+                            <option value="2">Semana 2 (10.08 - 15.08)</option>
+                            <option value="3">Semana 3 (17.08 - 22.08)</option>
+                            <option value="4">Semana 4 (24.08 - 29.08)</option>
+                            <option value="5">Semana 5 (31.08 - 05.09)</option>
+                            <option value="6">Semana 6 (07.09 - 11.09)</option>
+                            <option value="7">Semana 7 (14.09 - 19.09)</option>
+                            <option value="8">Semana 8 (21.09 - 26.09)</option>
+                            <option value="9">Semana 9 (28.09 - 03.10)</option>
+                            <option value="10">Semana 10 (05.10 - 10.10)</option>
+                            <option value="11">Semana 11 (12.10 - 17.10)</option>
+                            <option value="12">Semana 12 (19.10 - 24.10)</option>
+                            <option value="13">Semana 13 (26.10 - 31.10)</option>
+                            <option value="14">Semana 14 (02.11 - 07.11)</option>
+                            <option value="15">Semana 15 (09.11 - 14.11)</option>
+                            <option value="16">Semana 16 (16.11 - 21.11)</option>
+                            <option value="17">Semana 17 (23.11 - 24.11)</option>
+                        </select>
+                    </div>
+
+                    <!-- Reset Filters Button -->
+                    <button 
+                        onclick="resetAllFilters()" 
+                        class="px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-600 text-sm font-medium transition-colors flex items-center gap-1.5"
+                        title="Restablecer filtros">
+                        <i class="fa-solid fa-rotate-right text-xs"></i>
+                        <span class="hidden sm:inline">Restablecer</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CATEGORY FILTER PILLS -->
+            <div class="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-slate-100">
+                <span class="text-xs font-semibold text-slate-400 mr-1"><i class="fa-solid fa-filter mr-1"></i> Filtrar por actividad:</span>
+                
+                <button 
+                    onclick="setCategoryFilter('ALL')" 
+                    id="filter-ALL" 
+                    class="filter-pill active px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-clinical-600 text-white shadow-sm">
+                    Ver Todas (49)
+                </button>
+                
+                <button 
+                    onclick="setCategoryFilter('Cátedra')" 
+                    id="filter-Cátedra" 
+                    class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-slate-100 text-slate-600 hover:bg-sky-100 hover:text-sky-800">
+                    <i class="fa-solid fa-chalkboard-user mr-1 text-sky-600"></i> Cátedras (17)
+                </button>
+
+                <button 
+                    onclick="setCategoryFilter('Laboratorio')" 
+                    id="filter-Laboratorio" 
+                    class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-slate-100 text-slate-600 hover:bg-purple-100 hover:text-purple-800">
+                    <i class="fa-solid fa-microscope mr-1 text-purple-600"></i> Laboratorios Prácticos (17)
+                </button>
+
+                <button 
+                    onclick="setCategoryFilter('Ayudantía')" 
+                    id="filter-Ayudantía" 
+                    class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-slate-100 text-slate-600 hover:bg-emerald-100 hover:text-emerald-800">
+                    <i class="fa-solid fa-users-line mr-1 text-emerald-600"></i> Ayudantías (13)
+                </button>
+
+                <button 
+                    onclick="setCategoryFilter('Evaluación')" 
+                    id="filter-Evaluación" 
+                    class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-800">
+                    <i class="fa-solid fa-file-signature mr-1 text-rose-600"></i> Certámenes (2)
+                </button>
+
+                <button 
+                    onclick="setCategoryFilter('Feriado / Receso')" 
+                    id="filter-Feriado" 
+                    class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800">
+                    <i class="fa-solid fa-umbrella-beach mr-1 text-amber-600"></i> Recesos
+                </button>
+            </div>
+
+            <!-- RESULTS COUNTER & ACTIVE FILTER LABELS -->
+            <div class="flex justify-between items-center mt-3 text-xs text-slate-500">
+                <div id="activeFilterLabel" class="font-medium">
+                    Mostrando todas las sesiones programadas
+                </div>
+                <div id="resultsCount" class="font-semibold text-clinical-700 bg-clinical-50 px-2.5 py-0.5 rounded-full border border-clinical-200">
+                    49 sesiones
+                </div>
+            </div>
+        </div>
+
+        <!-- SESSIONS GRID -->
+        <div id="sessionsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Cards will be dynamically inserted here by JavaScript -->
+        </div>
+
+        <!-- EMPTY STATE MESSAGE (When filter yields 0 results) -->
+        <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border border-slate-200 my-6 shadow-sm">
+            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400 text-2xl mb-4">
+                <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <h3 class="text-lg font-heading font-semibold text-slate-800 mb-1">No se encontraron sesiones</h3>
+            <p class="text-sm text-slate-500 max-w-md mx-auto mb-6">
+                No hay actividades que coincidan con tu búsqueda o filtros seleccionados. Intenta con otros términos o restablece los filtros.
+            </p>
+            <button onclick="resetAllFilters()" class="px-4 py-2 bg-clinical-600 text-white rounded-xl text-sm font-medium hover:bg-clinical-700 transition-colors shadow-sm">
+                <i class="fa-solid fa-rotate-right mr-1.5"></i> Restablecer Filtros
+            </button>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-8 px-4 border-t border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-clinical-600/20 text-clinical-400 flex items-center justify-center font-bold text-sm">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+                <div>
+                    <p class="font-semibold text-white">Asignatura de Biofísica • Kinesiología</p>
+                    <p class="text-slate-500">Planilla Oficial 2026-2 • Prof. Gustavo Castro Palominos</p>
+                </div>
+            </div>
+            <div class="text-center sm:text-right">
+                <p>Desarrollado como Plataforma Web Interactiva HTML5/Tailwind</p>
+                <p class="text-slate-500 mt-0.5">Optimizado para Visual Studio Code & Live Server</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE SESSION DETAIL MODAL -->
+    <div id="sessionModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div id="modalBackdrop" onclick="closeModal()" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity opacity-0" aria-hidden="true"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <!-- Modal Panel -->
+            <div id="modalPanel" class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full border border-slate-200 opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                
+                <!-- Modal Header -->
+                <div class="bg-gradient-to-r from-slate-900 via-clinical-900 to-slate-900 px-6 py-5 text-white flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <span id="modalBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white">
+                            Categoría
+                        </span>
+                        <span id="modalWeekDate" class="text-xs text-slate-300 font-medium">
+                            Semana X • Fecha
+                        </span>
+                    </div>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-white/10">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6 sm:p-8 space-y-6 max-h-[75vh] overflow-y-auto">
+                    
+                    <!-- Session Title & Day info -->
+                    <div>
+                        <div class="flex items-center gap-2 text-xs font-semibold text-clinical-600 uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-calendar-day"></i>
+                            <span id="modalDay">DÍA HORA</span>
+                        </div>
+                        <h3 id="modalTitle" class="text-xl sm:text-2xl font-heading font-bold text-slate-900">
+                            Título del Módulo / Contenido
+                        </h3>
+                    </div>
+
+                    <!-- Logistics Banner -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-sm">
+                        <div class="flex items-center space-x-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-clinical-100 text-clinical-700 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-clock text-xs"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500 font-medium">Horario Oficial</p>
+                                <p id="modalHorario" class="font-semibold text-slate-800">Horario</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-mint-100 text-mint-700 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-location-dot text-xs"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500 font-medium">Sala / Laboratorio</p>
+                                <p id="modalSala" class="font-semibold text-slate-800">Sala</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resultados de Aprendizaje (RAG) -->
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-bullseye text-clinical-600"></i>
+                            <span>Resultados de Aprendizaje (RAG según Programa)</span>
+                        </h4>
+                        <div id="modalRAG" class="p-4 rounded-xl bg-clinical-50/50 border border-clinical-100 text-sm text-slate-700 whitespace-pre-line leading-relaxed">
+                            Contenido del RAG
+                        </div>
+                    </div>
+
+                    <!-- Actividades de la Clase -->
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-list-check text-mint-600"></i>
+                            <span>Actividades Pedagógicas Programadas</span>
+                        </h4>
+                        <div id="modalActividad" class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-sm text-slate-700 whitespace-pre-line leading-relaxed">
+                            Detalle de actividades
+                        </div>
+                    </div>
+
+                    <!-- Recursos de Aprendizaje -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-100 pt-4">
+                        <div>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2 mb-2">
+                                <i class="fa-solid fa-toolbox text-purple-600"></i>
+                                <span>Recursos & Materiales</span>
+                            </h4>
+                            <div id="modalRecursos" class="p-3.5 rounded-xl bg-purple-50/50 border border-purple-100 text-xs text-slate-700 whitespace-pre-line">
+                                Material de apoyo
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2 mb-2">
+                                <i class="fa-solid fa-award text-rose-600"></i>
+                                <span>Evaluación / Encargo / Ponderación</span>
+                            </h4>
+                            <div id="modalEvaluacion" class="p-3.5 rounded-xl bg-rose-50/50 border border-rose-100 text-xs font-semibold text-rose-900 whitespace-pre-line">
+                                FORMATIVA / SUMATIVA
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Docente info footer -->
+                    <div class="flex items-center justify-between border-t border-slate-100 pt-4 text-xs text-slate-500">
+                        <span class="flex items-center gap-1.5 font-medium">
+                            <i class="fa-solid fa-chalkboard-user text-clinical-600"></i>
+                            Docente: <strong class="text-slate-800">Gustavo Castro Palominos</strong>
+                        </span>
+                        <span class="text-slate-400">Asignatura: Biofísica • Kinesiología</span>
+                    </div>
+
+                </div>
+
+                <!-- Modal Footer Button -->
+                <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end">
+                    <button onclick="closeModal()" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium transition-colors shadow-sm">
+                        Cerrar Detalle
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EVALUATION RULES & COURSE NORMATIVE MODAL -->
+    <div id="rulesModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="rules-modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div id="rulesBackdrop" onclick="closeRulesModal()" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity opacity-0" aria-hidden="true"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div id="rulesPanel" class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-200 opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                <!-- Header -->
+                <div class="bg-gradient-to-r from-clinical-900 to-slate-900 px-6 py-5 text-white flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-lg bg-mint-500/20 text-mint-400 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-heading font-bold">Normativa Académica & Ponderaciones</h3>
+                            <p class="text-xs text-slate-300">Biofísica • 2do Semestre 2026</p>
+                        </div>
+                    </div>
+                    <button onclick="closeRulesModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/10">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Body -->
+                <div class="p-6 sm:p-8 space-y-6 max-h-[75vh] overflow-y-auto">
+                    
+                    <!-- Evaluation Weights Table -->
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-clinical-600"></i>
+                            <span>Ponderaciones del Curso</span>
+                        </h4>
+                        <div class="border border-slate-200 rounded-xl overflow-hidden text-sm">
+                            <table class="min-w-full divide-y divide-slate-200">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Evaluación</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Ponderación</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Fecha / Periodicidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 bg-white">
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="px-4 py-3 font-semibold text-slate-800">Certamen 1</td>
+                                        <td class="px-4 py-3 text-clinical-600 font-bold">20%</td>
+                                        <td class="px-4 py-3 text-slate-600 text-xs">10 de Septiembre • 17:50 a 20:20 hrs</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="px-4 py-3 font-semibold text-slate-800">Certamen 2</td>
+                                        <td class="px-4 py-3 text-clinical-600 font-bold">25%</td>
+                                        <td class="px-4 py-3 text-slate-600 text-xs">Sábado 21 de Noviembre • 08:30 a 11:00 hrs</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="px-4 py-3 font-semibold text-slate-800">Controles de Ayudantía</td>
+                                        <td class="px-4 py-3 text-mint-600 font-bold">15%</td>
+                                        <td class="px-4 py-3 text-slate-600 text-xs">Semanales en Ayudantía (Viernes)</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="px-4 py-3 font-semibold text-slate-800">Mini Proyectos</td>
+                                        <td class="px-4 py-3 text-purple-600 font-bold">15%</td>
+                                        <td class="px-4 py-3 text-slate-600 text-xs">Mensuales (Entregas en sábados)</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="px-4 py-3 font-semibold text-slate-800">Proyecto Final (Feria)</td>
+                                        <td class="px-4 py-3 text-purple-600 font-bold">15%</td>
+                                        <td class="px-4 py-3 text-slate-600 text-xs">Semana 15 (Miércoles 11 de Noviembre)</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="px-4 py-3 font-semibold text-slate-800">Encargos de Laboratorio</td>
+                                        <td class="px-4 py-3 text-amber-600 font-bold">10%</td>
+                                        <td class="px-4 py-3 text-slate-600 text-xs">Semanales en Laboratorio (Sábados)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Normative rules -->
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-exclamation text-amber-500"></i>
+                            <span>Normativa Académica Oficial (Planilla 2026-2)</span>
+                        </h4>
+
+                        <div class="p-4 rounded-xl bg-amber-50 border border-amber-200/80 text-xs text-amber-900 space-y-2">
+                            <p><strong><i class="fa-solid fa-check mr-1 text-amber-700"></i> Asistencia a Laboratorio:</strong> Las clases de los días sábados (Laboratorio) son obligatorias con un <strong>100% de asistencia</strong>. Se aceptará un máximo de 1 inasistencia debidamente justificada y autorizada por Coordinación Académica. Los laboratorios son irrecuperables por su naturaleza experimental.</p>
+                            <p><strong><i class="fa-solid fa-check mr-1 text-amber-700"></i> Ausencia a Certámenes:</strong> El estudiante que se ausente a un certamen deberá rendir obligatoriamente el examen global. Será la nota del examen la que reemplace la nota del certamen al que se ausentó.</p>
+                            <p><strong><i class="fa-solid fa-check mr-1 text-amber-700"></i> Eliminación de Controles:</strong> Si un estudiante se ausenta a un control y lo justifica oportunamente con autorización académica, podrá optar al cálculo de nota de controles omitiendo las <strong>2 calificaciones más bajas</strong> obtenidas.</p>
+                            <p><strong><i class="fa-solid fa-check mr-1 text-amber-700"></i> Eximición y Examen:</strong> El examen global e integrador está programado para el <strong>25 de Noviembre</strong>. La eximición es con <strong>nota ≥ 5.8 final</strong> y sin promedios insuficientes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end">
+                    <button onclick="closeRulesModal()" class="px-5 py-2 rounded-xl bg-clinical-600 hover:bg-clinical-700 text-white text-sm font-medium transition-colors shadow-sm">
+                        Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // OFFICIAL COURSE DATA EMBEDDED FROM EXCEL SPREADSHEET
+        const sessionsData = [{"id": 1, "semana": 1, "rangoFecha": "03.08 - 08.08", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(1) Resuelve de manera acertada, problemas de algebra trigonometría y de funciones, derivados del movimiento humano, utilizando el pensamiento lógico- matemático, a través del desarrollo de ejercicios.(2) Analiza gráficos de baja complejidad, logrando una interpretación acertada de los mismos en el desarrollo de casos reales o simulados, (3) Explica la utilidad del cálculo matemático para la práctica kinésica, de forma oral u escrita.", "contenido": "Módulo 1. Axiomática en IR Módulo 2. Ecuaciones y su importancia en Ciencias de la Salud y en Kinesiología", "actividad": "Clase expositiva participativa. Resuelve distintos problemas numéricos y algebraicos aplicados a contextos biofísicos. Resuelve ecuaciones de polinómicas, racionales y radicales con apoyo de calculadora científica. Uso de calculadora.", "recursos": "Presentación interactiva; Análisis de casos; Resolución de Problemas; Preguntas dirigidas y Simulación de casos PRÁCTICA INDEPENDIENTE", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 2, "semana": 1, "rangoFecha": "03.08 - 08.08", "dia": "SÁBADO", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Criterios de uso correcto de la IAG y estructura de prompts aplicado al desarrollo de soluciones tecnológicas y digitales de utilidad clínica.", "actividad": "Desarrollar estructuras de prompts para resolución de problemas contextualizados en el ámbito del análisis de datos para la Kinesiología, específicamente en las áreas: (1) Cardiorerespiratoria, (2) Musculoesquelética, (3) Neurorehabilitación, y (4) Salud de la mujer.", "recursos": "CLASE EXPOSITIVA GUÍA DE TRABAJO", "evaluacion": "ENCARGO Nº1", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 3, "semana": 1, "rangoFecha": "03.08 - 08.08", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Uso de calculadora y resolución de ecuaciones en contextos del área de la salud", "actividad": "Resolución de guía de problemas aplicados", "recursos": "Análisis de diversos fenómenos del área de la salud y de la kinesiología", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 4, "semana": 2, "rangoFecha": "10.08 - 15.08", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(1) Resuelve de manera acertada, problemas de algebra trigonometría y de funciones, derivados del movimiento humano, utilizando el pensamiento lógico- matemático, a través del desarrollo de ejercicios.(2) Analiza gráficos de baja complejidad, logrando una interpretación acertada de los mismos en el desarrollo de casos reales o simulados, (3) Explica la utilidad del cálculo matemático para la práctica kinésica, de forma oral u escrita.", "contenido": "Módulo 1. Introducción al concepto de función matemática y su importancia en Ciencias de la Salud Módulo 2. Álgebra de funciones", "actividad": "Clase expositiva participativa. Resuelve distintos problemas numéricos y algebraicos aplicados a contextos biofísicos. Resuelve sistemas de ecuaciones lineales, en contextos aplicados", "recursos": "Presentación interactiva; Análisis de casos; Resolución de Problemas; Preguntas dirigidas y Simulación de casos PRÁCTICA INDEPENDIENTE", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 5, "semana": 2, "rangoFecha": "10.08 - 15.08", "dia": "SÁBADO FERIADO", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Estructura y creación de bases de datos enfocado en desarrollo de dashboards con un enfoque: (1) De uso clínico para el profesional , (2) Interactivo con el paciente, (3) De almacenamiento y uso público de información.", "actividad": "Propone base de datos de interés kinésico para la elaboración de dashboards.", "recursos": "LECTURA PREVIA AULA INVERTIDA", "evaluacion": "ENCARGO Nº2: INVESTIGACIÓN AUTÓNOMA DURANTE LA SEMANA ENTREGA: 14.08.2026 EN CANVAS", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 6, "semana": 2, "rangoFecha": "10.08 - 15.08", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Uso de calculadora y resolución de ecuaciones en contextos del área de la salud", "actividad": "Resolución de guía de problemas aplicados", "recursos": "Análisis de diversos fenómenos del área de la salud y de la kinesiología", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 7, "semana": 3, "rangoFecha": "17.08 - 22.08", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(1) Resuelve de manera acertada, problemas de algebra trigonometría y de funciones, derivados del movimiento humano, utilizando el pensamiento lógico- matemático, a través del desarrollo de ejercicios.(2) Analiza gráficos de baja complejidad, logrando una interpretación acertada de los mismos en el desarrollo de casos reales o simulados, (3) Explica la utilidad del cálculo matemático para la práctica kinésica, de forma oral u escrita.", "contenido": "Módulo 1. Modelación matemática de funciones Módulo 2. Introducción al Cálculo: Nociones básicas acerca de límite de funciones", "actividad": "Clase expositiva participativa. Resuelve distintos problemas numéricos y algebraicos aplicados a contextos biofísicos. Resuelve ecuaciones exponenciales y logartímicas con apoyo de calculadora científica.", "recursos": "Presentación interactiva; Análisis de casos; Resolución de Problemas; Preguntas dirigidas y Simulación de casos PRÁCTICA INDEPENDIENTE", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 8, "semana": 3, "rangoFecha": "17.08 - 22.08", "dia": "SÁBADO", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Creación de códigos con IAG para la obtención de dashboards interactivos", "actividad": "Propone la estructura en .html de dashboards con enfoque en Ciencia y Análsis de Datos basados en: : (1) De uso clínico para el profesional , (2) Interactivo con el paciente, (3) De almacenamiento y uso público de información.", "recursos": "LECTURA PREVIA AL PRÁCTICO GUÍA DE TRABAJO", "evaluacion": "ENCARGO Nº3* Debe considerar al menos 2 de los 3 aspectos en los cuales se situará la creación de dashboards. En grupos de 3 personas", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 9, "semana": 3, "rangoFecha": "17.08 - 22.08", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Uso de calculadora y resolución de ecuaciones en contextos del área de la salud", "actividad": "Resolución de guía de problemas aplicados", "recursos": "Análisis de diversos fenómenos del área de la salud y de la kinesiología", "evaluacion": "CONTROL 1", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 10, "semana": 4, "rangoFecha": "24.08 - 29.08", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(1) Resuelve de manera acertada, problemas de algebra trigonometría y de funciones, derivados del movimiento humano, utilizando el pensamiento lógico- matemático, a través del desarrollo de ejercicios.(2) Analiza gráficos de baja complejidad, logrando una interpretación acertada de los mismos en el desarrollo de casos reales o simulados, (3) Explica la utilidad del cálculo matemático para la práctica kinésica, de forma oral u escrita.", "contenido": "Módulo 1. La derivada como razón de cambio Módulo 2. Álgebra de derivadas y razón de cambio instantánea", "actividad": "Clase expositiva participativa. Resuelve distintos problemas numéricos y algebraicos aplicados a contextos biofísicos. Resuelve ecuaciones trigonométricas con apoyo de calculadora científica.", "recursos": "Presentación interactiva; Análisis de casos; Resolución de Problemas; Preguntas dirigidas y Simulación de casos PRÁCTICA INDEPENDIENTE", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 11, "semana": 4, "rangoFecha": "24.08 - 29.08", "dia": "SÁBADO", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Propone la estructura de dashboards en .html con enfoque en Ciencia y Análsis de Datos basados en : (1) De uso clínico para el profesional , (2) Interactivo con el paciente, (3) De almacenamiento y uso público de información.", "actividad": "Expone dashboard interactivo basado en los encargos previos elaborados.", "recursos": "Exposición oral", "evaluacion": "ENTREGA MINI PROYECTO 1 Grupos de 3 personas", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 12, "semana": 4, "rangoFecha": "24.08 - 29.08", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Uso de calculadora y resolución de ecuaciones en contextos del área de la salud", "actividad": "Resolución de guía de problemas aplicados", "recursos": "Análisis de diversos fenómenos del área de la salud y de la kinesiología", "evaluacion": "FORMATIVO", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 13, "semana": 5, "rangoFecha": "31.08 - 05.09", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(1) Resuelve de manera acertada, problemas de algebra trigonometría y de funciones, derivados del movimiento humano, utilizando el pensamiento lógico- matemático, a través del desarrollo de ejercicios.(2) Analiza gráficos de baja complejidad, logrando una interpretación acertada de los mismos en el desarrollo de casos reales o simulados, (3) Explica la utilidad del cálculo matemático para la práctica kinésica, de forma oral u escrita.", "contenido": "Módulo 1. El criterio de la primera y segunda derivada Módulo 2. Análisis e interpretación de gráficos", "actividad": "Clase expositiva participativa. Resuelve distintos problemas numéricos y algebraicos aplicados a contextos biofísicos. Resuelve ecuaciones trigonométricas con apoyo de calculadora científica.", "recursos": "Presentación interactiva; Análisis de casos; Resolución de Problemas; Preguntas dirigidas y Simulación de casos PRÁCTICA INDEPENDIENTE", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 14, "semana": 5, "rangoFecha": "31.08 - 05.09", "dia": "SÁBADO", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Laboratorio de Aplicaciones de la Derivada", "actividad": "Laboraratorio Nº1", "recursos": "Guía de Laboratorio", "evaluacion": "ENCARGO Nº4", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 15, "semana": 5, "rangoFecha": "31.08 - 05.09", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Uso de calculadora y resolución de ecuaciones en contextos del área de la salud", "actividad": "Resolución de guía de problemas aplicados", "recursos": "Análisis de diversos fenómenos del área de la salud y de la kinesiología", "evaluacion": "CONTROL 2", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 16, "semana": 6, "rangoFecha": "07.09 - 11.09", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(7) Explica la utilidad de los sistemas de Unidades y Magnitudes Física para la práctica kinésica de forma oral u escrita.", "contenido": "Módulo 1. Análisis Dimensional Módulo 2. Metrología y sistemas de unidades de medida", "actividad": "Resolución de problemas contextualizados en el ámbitos de las Ciencias Biomédicas y en situaciones propias vinculadas a la profesión", "recursos": "Guía de ejercicios y Uso de calculadora científica", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 17, "semana": 6, "rangoFecha": "07.09 - 11.09", "dia": "MIÉRCOLES 10-SEP 17:50 a 20:20 hrs.", "tipoOriginal": "CERTAMEN 1", "categoria": "Evaluación", "aprendizajes": "(1) Resuelve de manera acertada, problemas de algebra trigonometría y de funciones, derivados del movimiento humano, utilizando el pensamiento lógico- matemático, a través del desarrollo de ejercicios.(2) Analiza gráficos de baja complejidad, logrando una interpretación acertada de los mismos en el desarrollo de casos reales o simulados, (3) Explica la utilidad del cálculo matemático para la práctica kinésica, de forma oral u escrita, (4) Resuelve de manera acertada, problemas de conversión de unidades, utilizando SIU ynomenclatura de prefijos para múltiplos y submúltiplos de la unidad, a través del desarrollo de ejercicios.", "contenido": "CERTAMEN 1 (20%): Contenidos Semana 1 a la 6", "actividad": "EVALUACIÓN INDIVIDUAL DE DESARROLLO: Resolución de problemas en contextos aplicados", "recursos": "Presentación interactiva; Análisis de casos; Resolución de Problemas; Preguntas dirigidas y Simulación de casos", "evaluacion": "SUMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Miércoles • Horario Especial Certamen", "sala": "Auditorio / Sala de Evaluación"}, {"id": 18, "semana": 6, "rangoFecha": "07.09 - 11.09", "dia": "VIERNES 11-SEP", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "RAG1. Analiza problemas de baja complejidad, relacionados con el movimiento humano, utilizando conceptos de lógica, cálculo, unidades de medidas, cinemática y dinámica, logrando una resolución acertada de los mismos. RAG2. Explica la utilidad de la biofísica para la práctica kinésica, logrando describir mediante el uso de conceptos y leyes vinculados a la cinemática y dinámica, actos motores simples", "contenido": "Presentación idea de Proyecto", "actividad": "Exposición de idea de proyecto con recursos digitales", "recursos": "Análisis de diversos fenómenos del área de la salud y de la kinesiología", "evaluacion": "PRESENTACIÓN IDEA PROYECTO En grupos de 3 personas", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 19, "semana": 7, "rangoFecha": "14.09 - 19-09", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Feriado / Receso", "aprendizajes": "RECESO DE FIESTAS PATRIAS", "contenido": "Receso Académico - Sin actividad lectiva", "actividad": "Feriado / Receso Universitario", "recursos": "Apuntes de cátedra y recursos virtuales.", "evaluacion": "Sin evaluación sumativa asociada.", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 20, "semana": 7, "rangoFecha": "14.09 - 19-09", "dia": "SÁBADO", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Actividad programada del curso.", "actividad": "Desarrollo de actividad académica según programa.", "recursos": "Apuntes de cátedra y recursos virtuales.", "evaluacion": "Sin evaluación sumativa asociada.", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 21, "semana": 7, "rangoFecha": "14.09 - 19-09", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Actividad programada del curso.", "actividad": "Desarrollo de actividad académica según programa.", "recursos": "Apuntes de cátedra y recursos virtuales.", "evaluacion": "Sin evaluación sumativa asociada.", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 22, "semana": 8, "rangoFecha": "21.09 - 26.09", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(1) Resuelve de manera acertada, problemas de algebra trigonometría y de funciones, derivados del movimiento humano, utilizando el pensamiento lógico- matemático, a través del desarrollo de ejercicios.(2) Analiza gráficos de baja complejidad, logrando una interpretación acertada de los mismos en el desarrollo de casos reales o simulados, (3) Explica la utilidad del cálculo matemático para la práctica kinésica, de forma oral u escrita.", "contenido": "Introducción a la Trigonometría", "actividad": "Resolución de problemas contextualizados en el ámbitos de las Ciencias Biomédicas y en situaciones propias vinculadas a la profesión", "recursos": "Guía de ejercicios y Uso de calculadora científica", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 23, "semana": 8, "rangoFecha": "21.09 - 26.09", "dia": "SÁBADO", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Prototipado e introducción al modelado 3D", "actividad": "Elabora el prototipo físico y digital de una estructura anatómica del miembro superior y/o inferior del cuerpo humano", "recursos": "LECTURA PREVIA AL PRÁCTICO GUÍA DE TRABAJO", "evaluacion": "ENCARGO Nº5", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 24, "semana": 8, "rangoFecha": "21.09 - 26.09", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Uso de calculadora y resolución de ecuaciones en contextos del área de la salud", "actividad": "Resolución de guía de problemas aplicados", "recursos": "Análisis de diversos fenómenos del área de la salud y de la kinesiología", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 25, "semana": 9, "rangoFecha": "28.09 - 03.10", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(5) Describe las diferencias entre las magnitudes escalares y vectores logrando representar estas últimas de forma gráfica y algebraica, a través del desarrollo de ejercicios", "contenido": "Vectores: Operatoria vectorial y sus aplicaciones en kinesiología", "actividad": "Resolución de problemas contextualizados en el ámbitos de las Ciencias Biomédicas y en situaciones propias vinculadas a la profesión", "recursos": "Guía de ejercicios y Uso de calculadora científica", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 26, "semana": 9, "rangoFecha": "28.09 - 03.10", "dia": "SÁBADO", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Modela digitalmente una estructura anatómica de interés kinésico, adaptada desde un repositorio virtual (ej: https://3d.nih.gov)", "actividad": "Elabora el RENDER bajo extensión .stl .obj, de la estructura anatómica de interés.", "recursos": "LECTURA PREVIA AL PRÁCTICO GUÍA DE TRABAJO", "evaluacion": "ENCARGO Nº6", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 27, "semana": 9, "rangoFecha": "28.09 - 03.10", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Uso de calculadora y resolución de ecuaciones en contextos del área de la salud", "actividad": "Resolución de guía de problemas aplicados", "recursos": "Análisis de diversos fenómenos del área de la salud y de la kinesiología", "evaluacion": "CONTROL 3", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 28, "semana": 10, "rangoFecha": "05.10 - 10.10", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(8) Explica la utilidad de la cinemática para la práctica kinésica, logrando describir mediante conceptos derivados de ella, actos motores simples, en situaciones reales o simuladas.", "contenido": "Móduo I. Aplicaciones de la Integral en Kinesiología Módulo II. Introducción a la Cinemática: MRU, MRUA y Trayectorias (horizontal y vertical).", "actividad": "Resolución de problemas contextualizados en el ámbitos de las Ciencias Biomédicas y en situaciones propias vinculadas a la profesión", "recursos": "Guía de ejercicios y Uso de calculadora científica", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 29, "semana": 10, "rangoFecha": "05.10 - 10.10", "dia": "SÁBADO", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Impresión 3D: Tecnologías aditivas, preparaciónde archivos, materiales y parámetros", "actividad": "Entrega del archivo del modelo 3D con programa creality o cura.", "recursos": "LECTURA PREVIA AL PRÁCTICO GUÍA DE TRABAJO", "evaluacion": "ENCARGO Nº6", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 30, "semana": 10, "rangoFecha": "05.10 - 10.10", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Uso de calculadora y resolución de ecuaciones en contextos del área de la salud", "actividad": "Resolución de guía de problemas aplicados", "recursos": "Análisis de diversos fenómenos del área de la salud y de la kinesiología", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 31, "semana": 11, "rangoFecha": "12.10 - 17.10", "dia": "LUNES", "tipoOriginal": "TEÓRICA - FERIADO", "categoria": "Feriado / Receso", "aprendizajes": "FERIADO", "contenido": "Receso Académico - Sin actividad lectiva", "actividad": "Feriado / Receso Universitario", "recursos": "Apuntes de cátedra y recursos virtuales.", "evaluacion": "Sin evaluación sumativa asociada.", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 32, "semana": 11, "rangoFecha": "12.10 - 17.10", "dia": "SÁBADO", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "(8) Explica la utilidad de la cinemática para la práctica kinésica, logrando describir mediante conceptos derivados de ella, actos motores simples, en situaciones reales o simuladas. (2) Resuelve problemas vinculados a la práctica kinésica, analizando las distintas estrategias en la resolución de problemas con y sin uso de tecnología. (3) Analiza distintos problemas numéricos vinculados a las acciones y problemáticas de la biofísica y la kinesiología", "contenido": "Entrega de estructura anatómica mediante impresión 3D", "actividad": "Expone estructura anatómica impresa en 3D y sus implicancias para la biolocomoción", "recursos": "Exposición oral", "evaluacion": "ENTREGA MINI PROYECTO 2 Grupos de 3 personas", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 33, "semana": 11, "rangoFecha": "12.10 - 17.10", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Introducción a la Cinemática", "actividad": "Resolución de problemas contextualizados en el ámbitos de las Ciencias Biomédicas y en situaciones propias vinculadas a la profesión", "recursos": "Guía de ejercicios y Uso de calculadora científica", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 34, "semana": 12, "rangoFecha": "19.10 - 24.10", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(8) Explica la utilidad de la cinemática para la práctica kinésica, logrando describir mediante conceptos derivados de ella, actos motores simples, en situaciones reales o simuladas.", "contenido": "Cinemática: Caída libre, Lanzamiento de proyectiles, Movimiciento circular.", "actividad": "Clase expositiva participativa. Resuelve distintos problemas numéricos y algebraicos aplicados a contextos biofísicos. Resuelve problemas utilizando ecuaciones de movimiento en un plano horizontal.", "recursos": "Presentación interactiva; Análisis de casos; Resolución de Problemas; Preguntas dirigidas y Simulación de casos", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 35, "semana": 12, "rangoFecha": "19.10 - 24.10", "dia": "SÁBADO", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Lógicas de programación y fundamentos de Microcontroladores, sensores y actuadores", "actividad": "Lenguaje de arduinos y proyecto básico de integración vinculado a la biofísica en base a propuestas elaboradas por el equipo docente.", "recursos": "CÁPSULA EXPLICATIVA PREVIA LECTURA PREVIA AL PRÁCTICO GUÍA DE TRABAJO", "evaluacion": "ENCARGO Nº7. Grupos de 3 personas", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 36, "semana": 12, "rangoFecha": "19.10 - 24.10", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Uso de calculadora y resolución de ecuaciones en contextos del área de la salud", "actividad": "Resolución de guía de problemas aplicados", "recursos": "Análisis de diversos fenómenos del área de la salud y de la kinesiología", "evaluacion": "CONTROL 4", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 37, "semana": 13, "rangoFecha": "26.10 - 31.10", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(9) Analiza problemas de baja complejidad, relacionados con el movimiento humano, haciendo uso de conceptos, teorías y leyes de la dinámica, logrando una resolución acertada de los mismos. (10) Explica la utilidad de la dinámica para la práctica kinésica, logrando describir mediante conceptos derivados de ella, actos motores simples, en situaciones reales o simuladas.", "contenido": "Dinámica: Leyes de Newton y fuerza de roce", "actividad": "Clase expositiva participativa. Resuelve distintos problemas numéricos y algebraicos aplicados a contextos biofísicos. Resuelve problemas utilizando los recursos teóricos vistos en clases", "recursos": "Presentación interactiva; Análisis de casos; Resolución de Problemas; Preguntas dirigidas y Simulación de casos", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 38, "semana": 13, "rangoFecha": "26.10 - 31.10", "dia": "SÁBADO - FERIADO", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Microcontroladores, sensores (movimiento y fuerza) y actuadores como insumos para la biolocomoción de estructuras anatómicas", "actividad": "Taller de integración tecnológica (Cinemática y Dinámica) en base a propuestas elaboradas por el equipo docente.", "recursos": "LECTURA PREVIA AL PRÁCTICO GUÍA DE TRABAJO", "evaluacion": "ENCARGO Nº8 Grupos de 3 personas", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 39, "semana": 13, "rangoFecha": "26.10 - 31.10", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Uso de calculadora y resolución de ecuaciones en contextos del área de la salud", "actividad": "Resolución de guía de problemas aplicados", "recursos": "Análisis de diversos fenómenos del área de la salud y de la kinesiología", "evaluacion": "FORMATIVO", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 40, "semana": 14, "rangoFecha": "02.11 - 07.11", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(9) Analiza problemas de baja complejidad, relacionados con el movimiento humano, haciendo uso de conceptos, teorías y leyes de la dinámica, logrando una resolución acertada de los mismos. (10) Explica la utilidad de la dinámica para la práctica kinésica, logrando describir mediante conceptos derivados de ella, actos motores simples, en situaciones reales o simuladas.", "contenido": "Dinámica: Ley de Hooke y sistemas de poleas simples", "actividad": "Clase expositiva participativa. Resuelve distintos problemas numéricos y algebraicos aplicados a contextos biofísicos. Resuelve problemas utilizando los recursos teóricos vistos en clases", "recursos": "Presentación interactiva; Análisis de casos; Resolución de Problemas; Preguntas dirigidas y Simulación de casos", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 41, "semana": 14, "rangoFecha": "02.11 - 07.11", "dia": "SÁBADO", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Proyecto de integración tecnológica", "actividad": "Exposición de miniproyecto 3", "recursos": "Exposición oral", "evaluacion": "ENTREGA MINI PROYECTO 3 Grupos de 3 personas", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 42, "semana": 14, "rangoFecha": "02.11 - 07.11", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "PRESENTACIÓN DE PROYECTO FINAL", "actividad": "Exposición de proyecto final", "recursos": "Exposición oral", "evaluacion": "Exposición Proyecto Final", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 43, "semana": 15, "rangoFecha": "09.11 - 14.11", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(9) Analiza problemas de baja complejidad, relacionados con el movimiento humano, haciendo uso de conceptos, teorías y leyes de la dinámica, logrando una resolución acertada de los mismos. (10) Explica la utilidad de la dinámica para la práctica kinésica, logrando describir mediante conceptos derivados de ella, actos motores simples, en situaciones reales o simuladas.", "contenido": "Dinámica: Trabajo y Energía. Parte I", "actividad": "Clase expositiva participativa. Resuelve distintos problemas numéricos y algebraicos aplicados a contextos biofísicos.", "recursos": "Presentación interactiva; Análisis de casos; Resolución de Problemas; Preguntas dirigidas y Simulación de casos", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 44, "semana": 15, "rangoFecha": "09.11 - 14.11", "dia": "MIÉRCOLES 11.11", "tipoOriginal": "PRÁCTICA - LABORATORIO", "categoria": "Laboratorio", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "FERIA CIENTÍFICA", "actividad": "Exposición de trabajo final del curso", "recursos": "Presentación oral con prototipo físico móvil y pendón", "evaluacion": "PROYECTO FINAL", "docente": "Gustavo Castro Palominos", "horario": "Miércoles • Horario Especial Certamen", "sala": "Auditorio / Sala de Evaluación"}, {"id": 45, "semana": 15, "rangoFecha": "09.11 - 14.11", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "Sin objetivo de aprendizaje específico registrado en planilla.", "contenido": "Uso de calculadora y resolución de ecuaciones en contextos del área de la salud", "actividad": "Resolución de guía de problemas aplicados", "recursos": "Análisis de diversos fenómenos del área de la salud y de la kinesiología", "evaluacion": "CONTROL 5 En duplas", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 46, "semana": 16, "rangoFecha": "16.11 - 21.11", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "(9) Analiza problemas de baja complejidad, relacionados con el movimiento humano, haciendo uso de conceptos, teorías y leyes de la dinámica, logrando una resolución acertada de los mismos. (10) Explica la utilidad de la dinámica para la práctica kinésica, logrando describir mediante conceptos derivados de ella, actos motores simples, en situaciones reales o simuladas.", "contenido": "Dinámica: Trabajo y Energía. Parte II", "actividad": "Clase expositiva participativa. Resuelve distintos problemas numéricos y algebraicos aplicados a contextos biofísicos.", "recursos": "Presentación interactiva; Análisis de casos; Resolución de Problemas; Preguntas dirigidas y Simulación de casos", "evaluacion": "FORMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}, {"id": 47, "semana": 16, "rangoFecha": "16.11 - 21.11", "dia": "SÁBADO 21-NOV 08:30 a 11:00 hrs.", "tipoOriginal": "CERTAMEN 2", "categoria": "Evaluación", "aprendizajes": "(1) Resuelve problemas de baja complejidad, utilizando conceptos de lógica y cálculo, logrando una resolución acertada en los tiempos disponibles. (2) Soluciona diferentes ecuaciones, analizando las distintas estrategias en la resolución de problemas. (3) Analiza distintos problemas numéricos vinculados a las acciones y problemáticas de la física. (4) Resuelve de manera acertada, problemas de conversión de unidades, utilizando SIU ynomenclatura de prefijos para múltiplos y submúltiplos de la unidad, a través del desarrollo de ejercicios.", "contenido": "CERTAMEN 2 (25%): Contenidos Semana 7 a la 15", "actividad": "EVALUACIÓN INDIVIDUAL DE DESARROLLO: Resolución de problemas en contextos aplicados", "recursos": "Presentación interactiva; Análisis de casos; Resolución de Problemas; Preguntas dirigidas y Simulación de casos", "evaluacion": "SUMATIVA", "docente": "Gustavo Castro Palominos", "horario": "Sábado • H1 - H2 (08:30 - 11:00 aprox.)", "sala": "Laboratorio de Kinesiología y Biofísica"}, {"id": 48, "semana": 16, "rangoFecha": "16.11 - 21.11", "dia": "VIERNES", "tipoOriginal": "AYUDANTÍA", "categoria": "Ayudantía", "aprendizajes": "(2) Soluciona diferentes ecuaciones, analizando las distintas estrategias en la resolución de problemas con y sin uso de tecnología. (3) Analiza distintos problemas numéricos vinculados a las acciones y problemáticas de la biofísica y la kinesiología", "contenido": "PRECERTAMEN", "actividad": "Resolución de guía de problemas aplicados", "recursos": "Análisis de diversos fenómenos del área de la salud y de la kinesiología", "evaluacion": "CONTROL 6", "docente": "Gustavo Castro Palominos", "horario": "Viernes • H5 (12:50 - 14:10 aprox.)", "sala": "Sala de Ayudantía"}, {"id": 49, "semana": 17, "rangoFecha": "23.11 - 24.11", "dia": "LUNES", "tipoOriginal": "TEÓRICA", "categoria": "Cátedra", "aprendizajes": "REVISIÓN DE CERTAMEN Y CASOS PENDIENTES", "contenido": "REVISIÓN DE CERTAMEN Y CASOS PENDIENTES", "actividad": "Desarrollo de actividad académica según programa.", "recursos": "Apuntes de cátedra y recursos virtuales.", "evaluacion": "Sin evaluación sumativa asociada.", "docente": "Gustavo Castro Palominos", "horario": "Lunes • H6 - H7 (14:30 - 17:00 aprox.)", "sala": "Sala Teórica / Cátedra"}];
+
+        // STATE VARIABLES
+        let currentCategory = 'ALL';
+        let currentWeek = 'ALL';
+        let searchQuery = '';
+
+        // INITIALIZE APP
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSessions();
+            
+            // Listen for Escape key to close modals
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeModal();
+                    closeRulesModal();
+                }
+            });
+        });
+
+        // FILTER FUNCTIONS
+        function setCategoryFilter(cat) {
+            currentCategory = cat;
+            
+            // Update filter pills UI
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                pill.classList.remove('active', 'bg-clinical-600', 'text-white', 'shadow-sm');
+                pill.classList.add('bg-slate-100', 'text-slate-600');
+            });
+
+            let activeBtnId = 'filter-' + (cat === 'ALL' ? 'ALL' : cat.split(' ')[0]);
+            const activeBtn = document.getElementById(activeBtnId);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-100', 'text-slate-600');
+                activeBtn.classList.add('active', 'bg-clinical-600', 'text-white', 'shadow-sm');
+            }
+
+            filterSessions();
+        }
+
+        function filterSessions() {
+            searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+            currentWeek = document.getElementById('weekFilter').value;
+
+            // Show/Hide clear search button
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (searchQuery.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            const filtered = sessionsData.filter(item => {
+                // Category match
+                const matchCategory = (currentCategory === 'ALL') || 
+                                      (item.categoria === currentCategory) || 
+                                      (currentCategory === 'Evaluación' && item.categoria === 'Evaluación');
+                
+                // Week match
+                const matchWeek = (currentWeek === 'ALL') || (item.semana.toString() === currentWeek);
+
+                // Search match
+                const matchSearch = (searchQuery === '') || 
+                    item.contenido.toLowerCase().includes(searchQuery) ||
+                    item.aprendizajes.toLowerCase().includes(searchQuery) ||
+                    item.actividad.toLowerCase().includes(searchQuery) ||
+                    item.dia.toLowerCase().includes(searchQuery) ||
+                    item.tipoOriginal.toLowerCase().includes(searchQuery) ||
+                    item.evaluacion.toLowerCase().includes(searchQuery) ||
+                    item.recursos.toLowerCase().includes(searchQuery) ||
+                    ('semana ' + item.semana).includes(searchQuery);
+
+                return matchCategory && matchWeek && matchSearch;
+            });
+
+            renderGrid(filtered);
+            updateFilterLabel(filtered.length);
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            filterSessions();
+        }
+
+        function resetAllFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('weekFilter').value = 'ALL';
+            setCategoryFilter('ALL');
+        }
+
+        function updateFilterLabel(count) {
+            const countBadge = document.getElementById('resultsCount');
+            const label = document.getElementById('activeFilterLabel');
+
+            countBadge.textContent = `${count} ${count === 1 ? 'sesión' : 'sesiones'}`;
+
+            let labelText = 'Mostrando ';
+            if (currentCategory === 'ALL' && currentWeek === 'ALL' && searchQuery === '') {
+                labelText += 'todas las sesiones programadas';
+            } else {
+                if (currentCategory !== 'ALL') labelText += `${currentCategory}s `;
+                if (currentWeek !== 'ALL') labelText += `• Semana ${currentWeek} `;
+                if (searchQuery !== '') labelText += `• Búsqueda: "${searchQuery}"`;
+            }
+            label.textContent = labelText;
+        }
+
+        // RENDER GRID FUNCTION
+        function renderGrid(data) {
+            const grid = document.getElementById('sessionsGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            if (data.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            grid.innerHTML = data.map((session, idx) => {
+                return getCardHTML(session, idx);
+            }).join('');
+        }
+
+        // GET CARD HTML WITH TAILWIND BADGES & HOVER EFFECTS
+        function getCardHTML(session, idx) {
+            // Configure badge styles per category
+            let badgeStyle = 'bg-sky-100 text-sky-800 border-sky-300';
+            let iconClass = 'fa-solid fa-chalkboard-user text-sky-600';
+            
+            if (session.categoria === 'Laboratorio') {
+                badgeStyle = 'bg-purple-100 text-purple-800 border-purple-300';
+                iconClass = 'fa-solid fa-flask text-purple-600';
+            } else if (session.categoria === 'Ayudantía') {
+                badgeStyle = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+                iconClass = 'fa-solid fa-users-line text-emerald-600';
+            } else if (session.categoria === 'Evaluación') {
+                badgeStyle = 'bg-rose-100 text-rose-800 border-rose-300';
+                iconClass = 'fa-solid fa-file-signature text-rose-600';
+            } else if (session.categoria === 'Feriado / Receso') {
+                badgeStyle = 'bg-amber-100 text-amber-800 border-amber-300';
+                iconClass = 'fa-solid fa-umbrella-beach text-amber-600';
+            }
+
+            // Highlight evaluation chip
+            let evalBadge = '';
+            if (session.evaluacion && session.evaluacion !== 'FORMATIVA' && session.evaluacion !== 'Sin evaluación sumativa asociada.') {
+                evalBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                    <i class="fa-solid fa-bell text-rose-500 text-[10px]"></i>
+                    ${session.evaluacion}
+                </span>`;
+            } else if (session.evaluacion === 'FORMATIVA') {
+                evalBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-600">
+                    Formativa
+                </span>`;
+            }
+
+            return `
+            <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between animate-fade-in-up" style="animation-delay: ${idx * 30}ms">
+                <div>
+                    <!-- Card Top Header -->
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${badgeStyle}">
+                            <i class="${iconClass} text-xs"></i>
+                            <span>${session.categoria}</span>
+                        </span>
+                        <span class="text-xs font-semibold text-slate-400">
+                            Semana ${session.semana} • ${session.rangoFecha}
+                        </span>
+                    </div>
+
+                    <!-- Day and Time Subheader -->
+                    <div class="text-xs font-bold uppercase tracking-wider text-clinical-700 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-calendar-day"></i>
+                        <span>${session.dia}</span>
+                    </div>
+
+                    <!-- Main Content Title -->
+                    <h3 class="text-base font-heading font-bold text-slate-900 mb-3 line-clamp-2 leading-snug">
+                        ${session.contenido}
+                    </h3>
+
+                    <!-- Activity / RAG Preview -->
+                    <p class="text-xs text-slate-600 line-clamp-3 mb-4 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <strong class="text-slate-800 font-semibold block mb-0.5">Actividad:</strong>
+                        ${session.actividad}
+                    </p>
+                </div>
+
+                <!-- Footer with Eval badge and Detail Button -->
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
+                    <div>
+                        ${evalBadge}
+                    </div>
+                    <button 
+                        onclick="openModal(${session.id})"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-clinical-50 hover:bg-clinical-600 text-clinical-700 hover:text-white text-xs font-semibold transition-all duration-200 border border-clinical-200/80 hover:border-clinical-600 shadow-sm">
+                        <span>Ver Detalle</span>
+                        <i class="fa-solid fa-arrow-right-long"></i>
+                    </button>
+                </div>
+            </div>
+            `;
+        }
+
+        // MODAL HANDLERS
+        function openModal(id) {
+            const session = sessionsData.find(item => item.id === id);
+            if (!session) return;
+
+            // Configure Badge Color in Modal Header
+            let badgeStyle = 'bg-sky-500 text-white';
+            if (session.categoria === 'Laboratorio') badgeStyle = 'bg-purple-600 text-white';
+            else if (session.categoria === 'Ayudantía') badgeStyle = 'bg-mint-600 text-white';
+            else if (session.categoria === 'Evaluación') badgeStyle = 'bg-rose-600 text-white';
+            else if (session.categoria === 'Feriado / Receso') badgeStyle = 'bg-amber-600 text-white';
+
+            const badgeEl = document.getElementById('modalBadge');
+            badgeEl.className = `px-3 py-1 rounded-full text-xs font-semibold ${badgeStyle}`;
+            badgeEl.textContent = session.categoria;
+
+            document.getElementById('modalWeekDate').textContent = `Semana ${session.semana} • ${session.rangoFecha}`;
+            document.getElementById('modalDay').textContent = session.dia;
+            document.getElementById('modalTitle').textContent = session.contenido;
+            document.getElementById('modalHorario').textContent = session.horario;
+            document.getElementById('modalSala').textContent = session.sala;
+            document.getElementById('modalRAG').textContent = session.aprendizajes;
+            document.getElementById('modalActividad').textContent = session.actividad;
+            document.getElementById('modalRecursos').textContent = session.recursos;
+            document.getElementById('modalEvaluacion').textContent = session.evaluacion;
+
+            // Show Modal with Animation
+            const modal = document.getElementById('sessionModal');
+            const backdrop = document.getElementById('modalBackdrop');
+            const panel = document.getElementById('modalPanel');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                backdrop.classList.add('opacity-100');
+                panel.classList.remove('opacity-0', 'translate-y-4', 'sm:scale-95');
+                panel.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+            }, 10);
+
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('sessionModal');
+            const backdrop = document.getElementById('modalBackdrop');
+            const panel = document.getElementById('modalPanel');
+
+            backdrop.classList.remove('opacity-100');
+            backdrop.classList.add('opacity-0');
+            panel.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
+            panel.classList.add('opacity-0', 'translate-y-4', 'sm:scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }, 200);
+        }
+
+        // RULES MODAL HANDLERS
+        function openRulesModal() {
+            const modal = document.getElementById('rulesModal');
+            const backdrop = document.getElementById('rulesBackdrop');
+            const panel = document.getElementById('rulesPanel');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                backdrop.classList.add('opacity-100');
+                panel.classList.remove('opacity-0', 'translate-y-4', 'sm:scale-95');
+                panel.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+            }, 10);
+
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeRulesModal() {
+            const modal = document.getElementById('rulesModal');
+            const backdrop = document.getElementById('rulesBackdrop');
+            const panel = document.getElementById('rulesPanel');
+
+            backdrop.classList.remove('opacity-100');
+            backdrop.classList.add('opacity-0');
+            panel.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
+            panel.classList.add('opacity-0', 'translate-y-4', 'sm:scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }, 200);
+        }
+    </script>
+</body>
+</html>
